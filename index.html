@@ -44,44 +44,45 @@
     </header>
     <main>
       <section class="hero">
-        <div class="container">
+        <div class="container hero__container">
           <p class="hero__eyebrow">Twoja następna historia</p>
           <h1 class="hero__title">
-            Dobry serial. <br class="hero__break" />Dobry wieczór
+            Dobry serial. <br class="hero__break" />Dobry wieczór.
           </h1>
           <p class="hero__description">
             Wyszukuj seriale i zapisuj te, do których chcesz wrócić.
           </p>
 
-          <form action="" class="search-form">
+          <form class="search-form">
             <label for="serial-query" class="search-form__label"
               >Tytuł serialu</label
             >
-            <div class="search-form__field">
-              <input
-                id="serial-query"
-                type="search"
-                name="query"
-                class="search-form__input"
-              />
-              <svg
-                class="search-form__icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                aria-hidden="true"
-              >
-                <circle cx="10.5" cy="10.5" r="6.5" />
-                <path d="m16 16 4.5 4.5" />
-              </svg>
+            <div class="search-form__row">
+              <div class="search-form__field">
+                <input
+                  id="serial-query"
+                  type="search"
+                  name="query"
+                  class="search-form__input"
+                />
+                <svg
+                  class="search-form__icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  aria-hidden="true"
+                >
+                  <circle cx="10.5" cy="10.5" r="6.5" />
+                  <path d="m16 16 4.5 4.5" />
+                </svg>
+              </div>
+              <button class="search-form__button" type="submit">Szukaj</button>
             </div>
-
-            <button class="search-form__button" type="submit">Szukaj</button>
             <p class="search-form__source">Tytuły i opisy pochodzą z TVmaze</p>
           </form>
         </div>
