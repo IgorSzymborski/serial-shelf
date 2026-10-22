@@ -110,11 +110,13 @@
                 <label class="search-result__label" for="sort">Sortuj</label>
                 <select class="search-result__select" name="sort" id="sort">
                   <option value="relevance">Trafność</option>
+                  <option value="rating-desc">Ocena: od najwyższej</option>
+                  <option value="rating-asc">Ocena: od najniższej</option>
                 </select>
               </div>
             </div>
           </div>
-
+          <p class="search-result__message" role="status"></p>
           <ul class="search-result__grid">
             <li class="search-result__item show-card">
               <div class="show-card__poster">

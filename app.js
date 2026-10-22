@@ -3,6 +3,12 @@ const searchForm = document.querySelector(".search-form");
 const searchInput = document.querySelector(".search-form__input");
 const submitButton = document.querySelector(".search-form__button");
 const resultsGrid = document.querySelector(".search-result__grid");
+const resultTitle = document.querySelector(".search-result__query");
+const resultLength = document.querySelector(".search-result__count");
+const searchResultMsg = document.querySelector(".search-result__message");
+const genreSelect = document.querySelector("#genre");
+
+let searchResults = [];
 
 const fetchSearchResults = async function (title) {
   const response = await fetch(
@@ -16,20 +22,19 @@ const fetchSearchResults = async function (title) {
   return data;
 };
 
-const init = async function () {
-  const results = await fetchSearchResults();
-  console.log(results);
-  createShowCard;
-  renderResults(results);
-};
-
 const renderResults = function (results) {
   resultsGrid.replaceChildren();
 
   results.forEach((result) => {
     const card = createShowCard(result.show);
     resultsGrid.append(card);
+    console.log(result);
   });
+};
+
+const renderResultsDetails = function (title, results) {
+  resultTitle.textContent = title;
+  resultLength.textContent = `Liczba wyników: ${results.length}`;
 };
 
 const createShowCard = function (show) {
@@ -101,9 +106,72 @@ const createShowCard = function (show) {
   return showCard;
 };
 
-searchForm.addEventListener("submit", function (e) {
+const renderGenreOptions = function (results) {
+  const genres = results.flatMap((result) => result.show.genres);
+  const uniqueGenres = [...new Set(genres)];
+
+  genreSelect.replaceChildren();
+
+  const option = document.createElement("option");
+  option.value = "all";
+  option.textContent = "Wszystkie";
+  genreSelect.append(option);
+
+  uniqueGenres.forEach((genre) => {
+    const genreOption = document.createElement("option");
+    genreOption.value = genre;
+    genreOption.textContent = genre;
+
+    genreSelect.append(genreOption);
+  });
+};
+
+const filterResults = function (results, genre) {
+  if (genre === "all") {
+    return results;
+  }
+
+  const filteredResults = results.filter((result) =>
+    result.show.genres.includes(genre),
+  );
+
+  return filteredResults;
+};
+
+searchForm.addEventListener("submit", async function (e) {
   e.preventDefault();
-  const searchVaule = searchInput.value.trim();
-  fetchSearchResults(searchVaule);
-  init();
+
+  const searchValue = searchInput.value.trim();
+  if (!searchValue) return;
+
+  searchResultMsg.textContent = "Szukam seriali…";
+  submitButton.disabled = true;
+  resultsGrid.replaceChildren();
+
+  try {
+    const results = await fetchSearchResults(searchValue);
+    searchResults = results;
+    renderResults(searchResults);
+    renderGenreOptions(results);
+
+    searchResultMsg.textContent = results.length
+      ? "Poniżej wyniki wyszukiwania"
+      : "Nie znaleziono seriali";
+
+    renderResultsDetails(searchValue, searchResults);
+  } catch (error) {
+    console.error(error);
+    searchResultMsg.textContent =
+      "Nie udało się pobrać wyników. Spróbuj ponownie";
+  } finally {
+    submitButton.disabled = false;
+  }
+});
+
+genreSelect.addEventListener("change", function () {
+  const selectedGenre = genreSelect.value;
+  const filteredResults = filterResults(searchResults, selectedGenre);
+  renderResults(filteredResults);
+
+  resultLength.textContent = `Liczba wyników: ${filteredResults.length}`;
 });
