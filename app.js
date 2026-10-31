@@ -7,8 +7,10 @@ const resultTitle = document.querySelector(".search-result__query");
 const resultLength = document.querySelector(".search-result__count");
 const searchResultMsg = document.querySelector(".search-result__message");
 const genreSelect = document.querySelector("#genre");
+const sortSelect = document.querySelector("#sort");
 
 let searchResults = [];
+let sorted;
 
 const fetchSearchResults = async function (title) {
   const response = await fetch(
@@ -28,7 +30,7 @@ const renderResults = function (results) {
   results.forEach((result) => {
     const card = createShowCard(result.show);
     resultsGrid.append(card);
-    console.log(result);
+    // console.log(result);
   });
 };
 
@@ -138,6 +140,43 @@ const filterResults = function (results, genre) {
   return filteredResults;
 };
 
+const sortResult = function (results, sort) {
+  const sortedResults = [...results];
+  if (sort === "releavnce") {
+    return sortedResults;
+  }
+
+  if (sort === "rating-asc" || sort === "rating-desc") {
+    sortedResults.sort((a, b) => {
+      const ratingA = a.show.rating.average;
+      const ratingB = b.show.rating.average;
+
+      if (ratingA === null && ratingB === null) return 0;
+      if (ratingA === null) return 1;
+      if (ratingB === null) return -1;
+
+      if (sort === "rating-asc") {
+        return ratingA - ratingB;
+      }
+
+      return ratingB - ratingA;
+    });
+  }
+
+  return sortedResults;
+};
+
+const updateSearchResults = function () {
+  const selectedGenre = genreSelect.value;
+  const selectedSort = sortSelect.value;
+
+  const filteredResults = filterResults(searchResults, selectedGenre);
+  const sortedResults = sortResult(filteredResults, selectedSort);
+
+  renderResults(sortedResults);
+  resultLength.textContent = `Liczba wyników: ${sortedResults.length}`;
+};
+
 searchForm.addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -169,9 +208,9 @@ searchForm.addEventListener("submit", async function (e) {
 });
 
 genreSelect.addEventListener("change", function () {
-  const selectedGenre = genreSelect.value;
-  const filteredResults = filterResults(searchResults, selectedGenre);
-  renderResults(filteredResults);
+  updateSearchResults();
+});
 
-  resultLength.textContent = `Liczba wyników: ${filteredResults.length}`;
+sortSelect.addEventListener("change", function () {
+  updateSearchResults();
 });
