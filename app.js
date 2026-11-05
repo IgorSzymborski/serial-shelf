@@ -8,9 +8,16 @@ const resultLength = document.querySelector(".search-result__count");
 const searchResultMsg = document.querySelector(".search-result__message");
 const genreSelect = document.querySelector("#genre");
 const sortSelect = document.querySelector("#sort");
+const searchSection = document.querySelector(".search-result");
+const detailsSection = document.querySelector(".show-details");
+const showDetailsBackButton = document.querySelector(".show-details__back");
+const myList = document.querySelector(".my-list");
+const navBar = document.querySelector(".navbar");
+const myListGrid = document.querySelector(".my-list__grid");
 
 let searchResults = [];
-let sorted;
+let list = [];
+let detailsReturnView = "discover";
 
 const fetchSearchResults = async function (title) {
   const response = await fetch(
@@ -30,7 +37,6 @@ const renderResults = function (results) {
   results.forEach((result) => {
     const card = createShowCard(result.show);
     resultsGrid.append(card);
-    // console.log(result);
   });
 };
 
@@ -42,6 +48,7 @@ const renderResultsDetails = function (title, results) {
 const createShowCard = function (show) {
   const showCard = document.createElement("li");
   showCard.classList.add("search-result__item", "show-card");
+  showCard.dataset.id = show.id;
 
   const html = `
     <div class="show-card__poster">
@@ -64,7 +71,7 @@ const createShowCard = function (show) {
       </div>
 
       <div class="show-card__actions">
-        <button class="show-card__button" type="button">
+        <button class="show-card__button show-card__button--details" type="button">
           Szczegóły
         </button>
         <button
@@ -142,7 +149,7 @@ const filterResults = function (results, genre) {
 
 const sortResult = function (results, sort) {
   const sortedResults = [...results];
-  if (sort === "releavnce") {
+  if (sort === "relevance") {
     return sortedResults;
   }
 
@@ -177,6 +184,65 @@ const updateSearchResults = function () {
   resultLength.textContent = `Liczba wyników: ${sortedResults.length}`;
 };
 
+const renderDetails = function (selectedResult) {
+  const imgDtl = document.querySelector(".show-details__image");
+  const titleDtl = document.querySelector(".show-details__title");
+  const yearDtl = document.querySelector(".metadata__year");
+  const typeDtl = document.querySelector(".metadata__type");
+  const ratingDtl = document.querySelector(".show-details__rating");
+  const descriptionDtl = document.querySelector(".show-details__description");
+
+  const show = selectedResult.show;
+
+  titleDtl.textContent = show.name;
+  yearDtl.textContent = show.premiered?.slice(0, 4) ?? "Brak daty";
+
+  typeDtl.textContent = show.genres.length
+    ? show.genres.join(", ")
+    : "Brak informacji o gatunku";
+
+  ratingDtl.textContent = `★ ${show.rating?.average ?? "Brak oceny"}`;
+
+  const imageUrl = show.image?.original ?? show.image?.medium;
+
+  if (imageUrl) {
+    imgDtl.src = imageUrl;
+    imgDtl.alt = `Plakat serialu ${show.name}`;
+  } else {
+    imgDtl.removeAttribute("src");
+    imgDtl.alt = `Brak plakatu serialu ${show.name}`;
+  }
+
+  if (show.summary) {
+    const parser = new DOMParser();
+    const parsedDescription = parser.parseFromString(show.summary, "text/html");
+
+    parsedDescription.querySelectorAll("p").forEach((paragraph) => {
+      paragraph.append(" ");
+    });
+
+    descriptionDtl.textContent =
+      parsedDescription.body.textContent.trim() || "Brak opisu";
+  } else {
+    descriptionDtl.textContent = "Brak opisu";
+  }
+};
+
+const renderMyList = function (list) {
+  myListGrid.replaceChildren();
+
+  list.forEach((el) => {
+    const savedShow = createShowCard(el.show);
+    const deleteButton = savedShow.querySelector(
+      ".show-card__button--secondary",
+    );
+    deleteButton.textContent = "- Usuń z listy";
+    deleteButton.classList.add("show-card__button--remove");
+
+    myListGrid.append(savedShow);
+  });
+};
+
 searchForm.addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -190,8 +256,9 @@ searchForm.addEventListener("submit", async function (e) {
   try {
     const results = await fetchSearchResults(searchValue);
     searchResults = results;
-    renderResults(searchResults);
     renderGenreOptions(results);
+    updateSearchResults();
+    sortSelect.option = "Trafność";
 
     searchResultMsg.textContent = results.length
       ? "Poniżej wyniki wyszukiwania"
@@ -205,7 +272,46 @@ searchForm.addEventListener("submit", async function (e) {
   } finally {
     submitButton.disabled = false;
   }
+  myList.hidden = true;
+  searchSection.hidden = false;
+  detailsSection.hidden = true;
 });
+
+const saveMyList = function () {
+  try {
+    const savedData = JSON.stringify(list);
+    localStorage.setItem("serial-shelf-list", savedData);
+  } catch (error) {
+    console.error("Nie udało się zapisać listy:", error);
+  }
+};
+
+const loadMyList = function () {
+  try {
+    const savedData = localStorage.getItem("serial-shelf-list");
+
+    if (savedData === null) return;
+
+    const parsedData = JSON.parse(savedData);
+
+    if (!Array.isArray(parsedData)) {
+      throw new Error("Zapisane dane nie są tablicą");
+    }
+
+    const hasValidItems = parsedData.every(
+      (item) => item?.show && typeof item.show.id === "number",
+    );
+
+    if (!hasValidItems) {
+      throw new Error("Zapisana lista ma nieprawidłową strukturę");
+    }
+
+    list = parsedData;
+  } catch (error) {
+    console.error("Nie udało się odczytać listy:", error);
+    list = [];
+  }
+};
 
 genreSelect.addEventListener("change", function () {
   updateSearchResults();
@@ -214,3 +320,94 @@ genreSelect.addEventListener("change", function () {
 sortSelect.addEventListener("change", function () {
   updateSearchResults();
 });
+
+resultsGrid.addEventListener("click", function (e) {
+  const card = e.target.closest(".show-card");
+  if (card) {
+    const id = Number(card.dataset.id);
+    detailsReturnView = "discover";
+
+    if (e.target.closest(".show-card__button--details")) {
+      const selectedResult = searchResults.find(
+        (result) => result.show.id === id,
+      );
+      if (selectedResult) {
+        renderDetails(selectedResult);
+        searchSection.hidden = true;
+        detailsSection.hidden = false;
+        myList.hidden = true;
+      } else return;
+    } else if (e.target.classList.contains("show-card__button")) {
+      const movieTolist = searchResults.find((result) => result.show.id === id);
+      if (list.some((el) => el.show.id === id)) {
+        return;
+      } else {
+        if (movieTolist) {
+          list.push(movieTolist);
+          saveMyList();
+        } else return;
+      }
+      renderMyList(list);
+    }
+  } else {
+    return;
+  }
+});
+
+showDetailsBackButton.addEventListener("click", function () {
+  detailsSection.hidden = true;
+
+  if (detailsReturnView === "my-list") {
+    myList.hidden = false;
+    searchSection.hidden = true;
+  } else {
+    searchSection.hidden = false;
+    myList.hidden = true;
+  }
+});
+
+navBar.addEventListener("click", function (e) {
+  if (e.target.closest(".navbar__button--list")) {
+    myList.hidden = false;
+    searchSection.hidden = true;
+    detailsSection.hidden = true;
+  } else if (e.target.closest(".navbar__button--explore")) {
+    myList.hidden = true;
+    searchSection.hidden = false;
+    detailsSection.hidden = true;
+  }
+});
+
+myListGrid.addEventListener("click", function (e) {
+  const card = e.target.closest(".show-card");
+  if (!card) return;
+
+  const id = Number(card.dataset.id);
+
+  if (e.target.closest(".show-card__button--remove")) {
+    const movieToDelete = list.findIndex((result) => result.show.id === id);
+
+    if (movieToDelete === -1) return;
+
+    list.splice(movieToDelete, 1);
+    saveMyList();
+    renderMyList(list);
+    return;
+  }
+
+  if (e.target.closest(".show-card__button--details")) {
+    const selectedDetails = list.find((result) => result.show.id === id);
+
+    if (!selectedDetails) return;
+
+    renderDetails(selectedDetails);
+    detailsReturnView = "my-list";
+
+    searchSection.hidden = true;
+    detailsSection.hidden = false;
+    myList.hidden = true;
+  }
+});
+
+loadMyList();
+renderMyList(list);
