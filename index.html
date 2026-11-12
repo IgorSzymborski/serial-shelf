@@ -25,7 +25,7 @@
           <ul class="navbar__list">
             <li class="navbar__item">
               <button
-                class="navbar__button navbar__button--active"
+                class="navbar__button navbar__button--active navbar__button--explore"
                 type="button"
                 aria-pressed="true"
               >
@@ -33,9 +33,9 @@
               </button>
             </li>
             <li class="navbar__item">
-              <button class="navbar__button" type="button" aria-pressed="false">
+              <button class="navbar__button navbar__button--list" type="button" aria-pressed="false">
                 Moja lista
-                <span class="navbar__count">3</span>
+                <span class="navbar__count">0</span>
               </button>
             </li>
           </ul>
@@ -93,9 +93,9 @@
           <div class="search-result__header">
             <div class="search-result__summary">
               <h2 class="search-result__title">
-                Wyniki dla „<span class="search-result__query">dark</span>”
+                Wyniki dla „<span class="search-result__query"></span>”
               </h2>
-              <p class="search-result__count">4 seriale</p>
+              <p class="search-result__count">Liczba wyników: 0</p>
             </div>
 
             <div class="search-result__filters">
@@ -110,280 +110,42 @@
                 <label class="search-result__label" for="sort">Sortuj</label>
                 <select class="search-result__select" name="sort" id="sort">
                   <option value="relevance">Trafność</option>
+                  <option value="rating-desc">Ocena: od najwyższej</option>
+                  <option value="rating-asc">Ocena: od najniższej</option>
                 </select>
               </div>
             </div>
           </div>
-
-          <ul class="search-result__grid">
-            <li class="search-result__item show-card">
-              <div class="show-card__poster">
-                <img
-                  src="assets/7814585_2.3.jpg"
-                  alt="Plakat serialu Dark"
-                  class="show-card__image"
-                />
-              </div>
-
-              <div class="show-card__content">
-                <h3 class="show-card__title">Dark</h3>
-                <p class="show-card__genres">Sci-fi, Thriller</p>
-
-                <div class="show-card__metadata">
-                  <p class="show-card__year">2017</p>
-                  <p class="show-card__rating">
-                    <span class="rating--accent">★</span> 8.7
-                  </p>
-                </div>
-
-                <div class="show-card__actions">
-                  <button class="show-card__button" type="button">
-                    Szczegóły
-                  </button>
-                  <button
-                    class="show-card__button show-card__button--secondary"
-                    type="button"
-                  >
-                    + Do listy
-                  </button>
-                </div>
-              </div>
-            </li>
-
-            <li class="search-result__item show-card">
-              <div class="show-card__poster">
-                <img
-                  src="assets/7814585_2.3.jpg"
-                  alt="Plakat serialu Dark"
-                  class="show-card__image"
-                />
-              </div>
-
-              <div class="show-card__content">
-                <h3 class="show-card__title">Dark</h3>
-                <p class="show-card__genres">Sci-fi, Thriller</p>
-
-                <div class="show-card__metadata">
-                  <p class="show-card__year">2017</p>
-                  <p class="show-card__rating">
-                    <span class="rating--accent">★</span> 8.7
-                  </p>
-                </div>
-
-                <div class="show-card__actions">
-                  <button class="show-card__button" type="button">
-                    Szczegóły
-                  </button>
-                  <button
-                    class="show-card__button show-card__button--secondary"
-                    type="button"
-                  >
-                    + Do listy
-                  </button>
-                </div>
-              </div>
-            </li>
-
-            <li class="search-result__item show-card">
-              <div class="show-card__poster">
-                <img
-                  src="assets/7814585_2.3.jpg"
-                  alt="Plakat serialu Dark"
-                  class="show-card__image"
-                />
-              </div>
-
-              <div class="show-card__content">
-                <h3 class="show-card__title">Pewnego razu... w Hollywood</h3>
-                <p class="show-card__genres">Sci-fi, Thriller</p>
-
-                <div class="show-card__metadata">
-                  <p class="show-card__year">2017</p>
-                  <p class="show-card__rating">
-                    <span class="rating--accent">★</span> 8.7
-                  </p>
-                </div>
-
-                <div class="show-card__actions">
-                  <button class="show-card__button" type="button">
-                    Szczegóły
-                  </button>
-                  <button
-                    class="show-card__button show-card__button--secondary"
-                    type="button"
-                  >
-                    + Do listy
-                  </button>
-                </div>
-              </div>
-            </li>
-
-            <li class="search-result__item show-card">
-              <div class="show-card__poster">
-                <img
-                  src="assets/7814585_2.3.jpg"
-                  alt="Plakat serialu Dark"
-                  class="show-card__image"
-                />
-              </div>
-
-              <div class="show-card__content">
-                <h3 class="show-card__title">Pewnego razu... w Hollywood</h3>
-                <p class="show-card__genres">Sci-fi, Thriller</p>
-
-                <div class="show-card__metadata">
-                  <p class="show-card__year">2017</p>
-                  <p class="show-card__rating">
-                    <span class="rating--accent">★</span> 8.7
-                  </p>
-                </div>
-
-                <div class="show-card__actions">
-                  <button class="show-card__button" type="button">
-                    Szczegóły
-                  </button>
-                  <button
-                    class="show-card__button show-card__button--secondary"
-                    type="button"
-                  >
-                    + Do listy
-                  </button>
-                </div>
-              </div>
-            </li>
-            <li class="search-result__item show-card">
-              <div class="show-card__poster">
-                <img
-                  src="assets/7814585_2.3.jpg"
-                  alt="Plakat serialu Dark"
-                  class="show-card__image"
-                />
-              </div>
-
-              <div class="show-card__content">
-                <h3 class="show-card__title">Pewnego razu... w Hollywood</h3>
-                <p class="show-card__genres">Sci-fi, Thriller</p>
-
-                <div class="show-card__metadata">
-                  <p class="show-card__year">2017</p>
-                  <p class="show-card__rating">
-                    <span class="rating--accent">★</span> 8.7
-                  </p>
-                </div>
-
-                <div class="show-card__actions">
-                  <button class="show-card__button" type="button">
-                    Szczegóły
-                  </button>
-                  <button
-                    class="show-card__button show-card__button--secondary"
-                    type="button"
-                  >
-                    + Do listy
-                  </button>
-                </div>
-              </div>
-            </li>
-            <li class="search-result__item show-card">
-              <div class="show-card__poster">
-                <img
-                  src="assets/7814585_2.3.jpg"
-                  alt="Plakat serialu Dark"
-                  class="show-card__image"
-                />
-              </div>
-
-              <div class="show-card__content">
-                <h3 class="show-card__title">Pewnego razu... w Hollywood</h3>
-                <p class="show-card__genres">Sci-fi, Thriller</p>
-
-                <div class="show-card__metadata">
-                  <p class="show-card__year">2017</p>
-                  <p class="show-card__rating">
-                    <span class="rating--accent">★</span> 8.7
-                  </p>
-                </div>
-
-                <div class="show-card__actions">
-                  <button class="show-card__button" type="button">
-                    Szczegóły
-                  </button>
-                  <button
-                    class="show-card__button show-card__button--secondary"
-                    type="button"
-                  >
-                    + Do listy
-                  </button>
-                </div>
-              </div>
-            </li>
-            <li class="search-result__item show-card">
-              <div class="show-card__poster">
-                <img
-                  src="assets/7814585_2.3.jpg"
-                  alt="Plakat serialu Dark"
-                  class="show-card__image"
-                />
-              </div>
-
-              <div class="show-card__content">
-                <h3 class="show-card__title">Pewnego razu... w Hollywood</h3>
-                <p class="show-card__genres">Sci-fi, Thriller</p>
-
-                <div class="show-card__metadata">
-                  <p class="show-card__year">2017</p>
-                  <p class="show-card__rating">
-                    <span class="rating--accent">★</span> 8.7
-                  </p>
-                </div>
-
-                <div class="show-card__actions">
-                  <button class="show-card__button" type="button">
-                    Szczegóły
-                  </button>
-                  <button
-                    class="show-card__button show-card__button--secondary"
-                    type="button"
-                  >
-                    + Do listy
-                  </button>
-                </div>
-              </div>
-            </li>
-          </ul>
+          <p class="search-result__message" role="status">Wpisz tytuł serialu, aby rozpocząć wyszukiwanie.</p>
+          <ul class="search-result__grid"></ul>
         </div>
       </section>
 
       <section class="show-details" aria-labelledby="show-details-title" hidden>
         <div class="container">
           <button class="show-details__back" type="button">
-            ← Wróć do wyników
+            ← Wróć
           </button>
 
           <div class="show-details__layout">
             <div class="show-details__poster">
               <img
                 class="show-details__image"
-                src="assets/7814585_2.3.jpg"
-                alt="Plakat serialu Dark"
+                alt=""
               />
             </div>
 
             <div class="show-details__content">
               <p class="show-details__eyebrow">Szczegóły serialu</p>
-              <h2 class="show-details__title" id="show-details-title">Dark</h2>
+              <h2 class="show-details__title" id="show-details-title"></h2>
 
               <div class="show-details__metadata">
-                <span>2017</span>
-                <span>Sci-fi, Thriller</span>
-                <span class="show-details__rating">★ 8.7</span>
+                <span class="metadata__year"></span>
+                <span class="metadata__type"></span>
+                <span class="show-details__rating"></span>
               </div>
 
-              <p class="show-details__description">
-                Tu pojawi się opis serialu pobrany z API. Na razie możesz
-                wstawić przykładowy tekst, żeby sprawdzić układ przy krótkim i
-                długim opisie.
-              </p>
+              <p class="show-details__description"></p>
 
               <button class="show-details__button" type="button">
                 + Dodaj do mojej listy
@@ -404,44 +166,10 @@
               </p>
             </div>
 
-            <p class="my-list__count">1 serial</p>
+            <p class="my-list__count">Liczba seriali: 0</p>
           </div>
 
-          <ul class="my-list__grid">
-            <li class="my-list__item show-card">
-              <div class="show-card__poster">
-                <img
-                  class="show-card__image"
-                  src="assets/7814585_2.3.jpg"
-                  alt="Plakat serialu Dark"
-                />
-              </div>
-
-              <div class="show-card__content">
-                <h3 class="show-card__title">Dark</h3>
-                <p class="show-card__genres">Sci-fi, Thriller</p>
-
-                <div class="show-card__metadata">
-                  <p class="show-card__year">2017</p>
-                  <p class="show-card__rating">
-                    <span class="rating--accent">★</span> 8.7
-                  </p>
-                </div>
-
-                <div class="show-card__actions">
-                  <button class="show-card__button" type="button">
-                    Szczegóły
-                  </button>
-                  <button
-                    class="show-card__button show-card__button--secondary"
-                    type="button"
-                  >
-                    Usuń z listy
-                  </button>
-                </div>
-              </div>
-            </li>
-          </ul>
+          <ul class="my-list__grid"></ul>
 
           <div class="my-list__empty" hidden>
             <h3 class="my-list__empty-title">Twoja lista jest pusta</h3>
