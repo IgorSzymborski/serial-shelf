@@ -14,14 +14,19 @@ const showDetailsBackButton = document.querySelector(".show-details__back");
 const myList = document.querySelector(".my-list");
 const navBar = document.querySelector(".navbar");
 const myListGrid = document.querySelector(".my-list__grid");
+const myListCount = document.querySelector(".my-list__count");
+const navBarCount = document.querySelector(".navbar__count");
+const detailsButton = document.querySelector(".show-details__button");
+const browseButton = document.querySelector(".my-list__browse");
 
 let searchResults = [];
 let list = [];
+let openSerialDetails = null;
 let detailsReturnView = "discover";
 
 const fetchSearchResults = async function (title) {
   const response = await fetch(
-    `https://api.tvmaze.com/search/shows?q=${title}`,
+    `https://api.tvmaze.com/search/shows?q=${encodeURIComponent(title)}`,
   );
 
   if (!response.ok) {
@@ -191,8 +196,20 @@ const renderDetails = function (selectedResult) {
   const typeDtl = document.querySelector(".metadata__type");
   const ratingDtl = document.querySelector(".show-details__rating");
   const descriptionDtl = document.querySelector(".show-details__description");
+  openSerialDetails = selectedResult;
 
   const show = selectedResult.show;
+
+  const detailsButton = document.querySelector(".show-details__button");
+  detailsButton.dataset.id = show.id;
+
+  const isSaved = list.some((result) => result.show.id === show.id);
+
+  if (isSaved) {
+    detailsButton.textContent = "- Usuń z mojej listy";
+  } else {
+    detailsButton.textContent = "+ Dodaj do mojej listy";
+  }
 
   titleDtl.textContent = show.name;
   yearDtl.textContent = show.premiered?.slice(0, 4) ?? "Brak daty";
@@ -231,6 +248,17 @@ const renderDetails = function (selectedResult) {
 const renderMyList = function (list) {
   myListGrid.replaceChildren();
 
+  const emptyMessage = document.querySelector(".my-list__empty");
+
+  if (list.length === 0) {
+    emptyMessage.hidden = false;
+  } else {
+    emptyMessage.hidden = true;
+  }
+
+  myListCount.textContent = navBarCount.textContent = list.length;
+  console.log(myListCount);
+
   list.forEach((el) => {
     const savedShow = createShowCard(el.show);
     const deleteButton = savedShow.querySelector(
@@ -249,22 +277,33 @@ searchForm.addEventListener("submit", async function (e) {
   const searchValue = searchInput.value.trim();
   if (!searchValue) return;
 
+  updateNavigation("discover");
+
+  myList.hidden = true;
+  searchSection.hidden = false;
+  detailsSection.hidden = true;
+
   searchResultMsg.textContent = "Szukam seriali…";
   submitButton.disabled = true;
   resultsGrid.replaceChildren();
+  searchResults = [];
+  resultLength.textContent = "Liczba wyników: 0";
 
   try {
     const results = await fetchSearchResults(searchValue);
     searchResults = results;
+
     renderGenreOptions(results);
+
+    genreSelect.value = "all";
+    sortSelect.value = "relevance";
+
     updateSearchResults();
-    sortSelect.option = "Trafność";
+    renderResultsDetails(searchValue, searchResults);
 
     searchResultMsg.textContent = results.length
       ? "Poniżej wyniki wyszukiwania"
       : "Nie znaleziono seriali";
-
-    renderResultsDetails(searchValue, searchResults);
   } catch (error) {
     console.error(error);
     searchResultMsg.textContent =
@@ -272,10 +311,20 @@ searchForm.addEventListener("submit", async function (e) {
   } finally {
     submitButton.disabled = false;
   }
-  myList.hidden = true;
-  searchSection.hidden = false;
-  detailsSection.hidden = true;
 });
+
+const updateNavigation = function (view) {
+  const exploreButton = document.querySelector(".navbar__button--explore");
+  const listButton = document.querySelector(".navbar__button--list");
+
+  const isDiscover = view === "discover";
+
+  exploreButton.classList.toggle("navbar__button--active", isDiscover);
+  listButton.classList.toggle("navbar__button--active", !isDiscover);
+
+  exploreButton.setAttribute("aria-pressed", String(isDiscover));
+  listButton.setAttribute("aria-pressed", String(!isDiscover));
+};
 
 const saveMyList = function () {
   try {
@@ -312,6 +361,15 @@ const loadMyList = function () {
     list = [];
   }
 };
+
+browseButton.addEventListener("click", function () {
+  myList.hidden = true;
+  detailsSection.hidden = true;
+  searchSection.hidden = false;
+
+  updateNavigation("discover");
+  searchInput.focus();
+});
 
 genreSelect.addEventListener("change", function () {
   updateSearchResults();
@@ -371,10 +429,14 @@ navBar.addEventListener("click", function (e) {
     myList.hidden = false;
     searchSection.hidden = true;
     detailsSection.hidden = true;
+
+    updateNavigation("my-list");
   } else if (e.target.closest(".navbar__button--explore")) {
     myList.hidden = true;
     searchSection.hidden = false;
     detailsSection.hidden = true;
+
+    updateNavigation("discover");
   }
 });
 
@@ -407,6 +469,27 @@ myListGrid.addEventListener("click", function (e) {
     detailsSection.hidden = false;
     myList.hidden = true;
   }
+});
+
+detailsButton.addEventListener("click", function () {
+  const id = Number(detailsButton.dataset.id);
+
+  const savedIndex = list.findIndex((result) => result.show.id === id);
+
+  if (savedIndex !== -1) {
+    list.splice(savedIndex, 1);
+    detailsButton.textContent = "+ Dodaj do mojej listy";
+  } else {
+    const selectedResult = openSerialDetails;
+
+    if (!selectedResult) return;
+
+    list.push(selectedResult);
+    detailsButton.textContent = "- Usuń z mojej listy";
+  }
+
+  saveMyList();
+  renderMyList(list);
 });
 
 loadMyList();
